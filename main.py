@@ -1,4 +1,5 @@
-INF_CONST = int(10e9 + 7)
+INF_CONST = 10000000007
+
 
 def subtraction(a_matrix, b_matrix):
     if (len(b_matrix) != len(a_matrix) or len(a_matrix[0]) != len(b_matrix[0]) or len(a_matrix) != len(a_matrix[0])):
