@@ -13,5 +13,7 @@ def main():
         adjacency_matrix[out_node][in_node] = 1
 
 
+print("hello, git")
+
 if __name__ == "__main__":
     main()
