@@ -25,44 +25,6 @@ def transposition(a_matrix):
     return trans_matrix
 
 
-def main():
-    print("Введите количество вершин графа: ", end="")
-    node_quantity = int(input())
-    print("Введите количество ребер в графе: ", end="")
-    edge_quantity = int(input())
-    adjacency_matrix = [[0] * node_quantity for i in range(node_quantity)]
-    print("Введите {} ребер в формате: <исходящая вершина> <входящая вершина> <вес вершины>."
-          "(Без скобок. Номера вершин начинаются с 1)".format(edge_quantity))
-    S_matrix = [[0 for i in range(node_quantity)] for i in range(node_quantity)]
-    for i in range(edge_quantity):
-        out_node, in_node, cost = map(int, input().split())
-        out_node -= 1
-        in_node -= 1
-        adjacency_matrix[out_node][in_node] = cost
-        S_matrix[out_node][in_node] = 0 if cost == 0 else 1
-    L_matrix = subtraction(adjacency_matrix, transposition(adjacency_matrix))
-    C_matrix = [[0] * node_quantity for i in range(node_quantity)]
-    for i in range(node_quantity):
-        for j in range(node_quantity):
-            C_matrix[i][j] = L_matrix[i][j]
-            if C_matrix[i][j] <= 0:
-                C_matrix[i][j] = INF_CONST
-
-    t, s = find_t_and_s(S_matrix, len(S_matrix))
-    v = [i for i in range(len(S_matrix))]
-    spis_g = []
-    while s != []:
-        s, g, ans, v = find_s_P(S_matrix, s, v)
-        spis_g += [[g, ans]]
-    for i in range(len(spis_g)):
-        print(i + 1, "-я компонента сильной связанности:", sep="")
-        for j in spis_g[i][1]:
-            print(j + 1, end=" ")
-        print()
-        for j in spis_g[i][0]:
-            print(*j)
-
-
 def disjunction(a, b):
     n = len(a)
     for i in range(n):
@@ -145,6 +107,65 @@ def find_s_P(a, s, v):
             for j in range(len(s)):
                 s[j] = s[j][:ind] + (s[j][ind + 1:] if ind != len(v) else [])
     return s, g, ans, v
+
+
+def find_g0(a, spis_g):
+    p = len(spis_g)
+    g0 = [[0 for i in range(p)] for j in range(p)]
+    for i in range(p):
+        for w in spis_g[i][1]:
+            for j in range(p):
+                if j != i:
+                    for w2 in spis_g[j][1]:
+                        if a[w][w2] != 0:
+                            g0[i][j] = 1
+                        if a[w2][w] != 0:
+                            g0[j][i] = 1
+    return g0
+
+
+def main():
+    print("Введите количество вершин графа: ", end="")
+    node_quantity = int(input())
+    print("Введите количество ребер в графе: ", end="")
+    edge_quantity = int(input())
+    adjacency_matrix = [[0] * node_quantity for i in range(node_quantity)]
+    print("Введите {} ребер в формате: <исходящая вершина> <входящая вершина> <вес вершины>."
+          "(Без скобок. Номера вершин начинаются с 1)".format(edge_quantity))
+    S_matrix = [[0 for i in range(node_quantity)] for i in range(node_quantity)]
+    for i in range(edge_quantity):
+        out_node, in_node, cost = map(int, input().split())
+        out_node -= 1
+        in_node -= 1
+        adjacency_matrix[out_node][in_node] = cost
+        S_matrix[out_node][in_node] = 0 if cost == 0 else 1
+    L_matrix = subtraction(adjacency_matrix, transposition(adjacency_matrix))
+    C_matrix = [[0] * node_quantity for i in range(node_quantity)]
+    for i in range(node_quantity):
+        for j in range(node_quantity):
+            C_matrix[i][j] = L_matrix[i][j]
+            if C_matrix[i][j] <= 0:
+                C_matrix[i][j] = INF_CONST
+
+    t, s = find_t_and_s(S_matrix, len(S_matrix))
+    v = [i for i in range(len(S_matrix))]
+    spis_g = []
+    while s != []:
+        s, g, ans, v = find_s_P(S_matrix, s, v)
+        spis_g += [[g, ans]]
+    g0 = find_g0(S_matrix, spis_g)
+    for i in range(len(spis_g)):
+        print(i + 1, "-я компонента сильной связанности:", sep="")
+        print("Вершины, входящие в ", i + 1, "-ю компоненту сильной связанности: ", sep="", end="")
+        for j in spis_g[i][1]:
+            print(j + 1, end=" ")
+        print()
+        print("Матрица смежности ", i + 1, "-й компоненты сильной связанности:", sep="")
+        for j in spis_g[i][0]:
+            print(*j)
+    print("Матрица смежности орграфа конденсации:")
+    for i in g0:
+        print(*i)
 
 
 if __name__ == "__main__":
