@@ -35,14 +35,14 @@ def main():
           "(Без скобок. Номера вершин начинаются с 1)".format(edge_quantity))
     S_matrix = [[0 for i in range(node_quantity)] for i in range(node_quantity)]
     for i in range(edge_quantity):
-        out_node, in_node, cost = int(input()), int(input()), int(input())
+        out_node, in_node, cost = map(int, input().split())
         out_node -= 1
         in_node -= 1
         adjacency_matrix[out_node][in_node] = cost
         S_matrix[out_node][in_node] = 0 if cost == 0 else 1
     L_matrix = subtraction(adjacency_matrix, transposition(adjacency_matrix))
     C_matrix = [[0] * node_quantity for i in range(node_quantity)]
-    for i in range(edge_quantity):
+    for i in range(node_quantity):
         for j in range(node_quantity):
             C_matrix[i][j] = L_matrix[i][j]
             if C_matrix[i][j] <= 0:
@@ -50,7 +50,6 @@ def main():
 
     t, s = find_t_and_s(S_matrix, len(S_matrix))
     v = [i for i in range(len(S_matrix))]
-    print(s)
     spis_g = []
     while s != []:
         s, g, ans, v = find_s_P(S_matrix, s, v)
